@@ -1,0 +1,20 @@
+{
+    "name": "e-shop",
+    "version": "1.0.0",
+    "description": "A simple e-shop Node.js application",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "keywords": ["e-shop", "nodejs", "express"],
+    "author": "Your Name",
+    "license": "MIT",
+    "dependencies": {
+      "@mailchimp/mailchimp_marketing": "^3.0.0",
+      "@mollie/api-client": "^3.7.0",
+      "axios": "^0.24.0",
+      "body-parser": "^1.19.0",
+      "express": "^4.17.1"
+    }
+  }
+  
