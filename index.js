@@ -1,11 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Client:Mailchimp, User: bi } = require('@mailchimp/mailchimp_marketing');
+const { Client: Mailchimp } = require('@mailchimp/mailchimp_marketing');
 const { createPayment, getPaymentStatus } = require('./mollie');
 const { sendMessageToChatGPT } = require('./chatgpt');
-import * as cors from 'cors';
 
-console.log(bi)
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -23,9 +21,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/register', async (req, res) => {
   const { email, name } = req.body;
 
+
   try {
     // Subscribe to Mailchimp newsletter
-    await mailchimp.lists.addListMember(process.env.MAILCHIMP_AUDIENCE_ID, {
+    await mailchimp.lists.addListMember(
+      process.env.MAILCHIMP_AUDIENCE_ID, {
       email_address: email,
       status: 'subscribed',
       merge_fields: { FNAME: name },
@@ -49,7 +49,6 @@ app.post('/pay', async (req, res) => {
     const paymentResponse = await createPayment(amount, description, redirectUrl);
 
     // Additional payment processing logic can be added here
-
     res.status(200).json({ paymentUrl: paymentResponse.links.paymentUrl });
   } catch (error) {
     console.error(error);
@@ -74,11 +73,11 @@ app.get('/payment/status/:paymentId', async (req, res) => {
 
 // Endpoint for interacting with ChatGPT
 app.post('/chat', async (req, res) => {
-  const { message } = req.body;
+  const { email, message } = req.body;
 
   try {
     // Send message to ChatGPT
-    const chatResponse = await sendMessageToChatGPT(message);
+    const chatResponse = await sendMessageToChatGPT(message, email);
 
     res.status(200).json({ reply: chatResponse.data.choices[0].text.trim() });
   } catch (error) {

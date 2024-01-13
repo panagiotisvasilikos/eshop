@@ -1,23 +1,15 @@
-const axios = require('axios');
+import OpenAI from 'openai';
 
-const CHATGPT_API_URL = 'https://api.openai.com/v1/chat/completions';
+const openai = new OpenAI({
+  apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
+});
 
-async function sendMessageToChatGPT(message) {
-  const response = await axios.post(
-    CHATGPT_API_URL,
-    {
-      model: 'text-davinci-003', // Replace with the desired model
-      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.CHATGPT_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  return response;
+async function sendMessageToChatGPT(message, email) {
+  const chatCompletion = await openai.chat.completions.create({
+    messages: [{ role: 'user', content: message, email_address: email }],
+    model: 'gpt-3.5-turbo',
+  });
 }
+
 
 module.exports = { sendMessageToChatGPT };
